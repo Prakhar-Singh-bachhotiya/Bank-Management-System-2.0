@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Banking App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Account Overview Card -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Account Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3>₹{{ user.balance }}</h3>
+                        <p class="text-muted">Available Balance</p>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5>Recent Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">₹500 - Grocery Purchase</li>
+                            <li class="list-group-item">₹200 - Online Payment</li>
+                            <li class="list-group-item">₹1,000 - Salary Credit</li>
+                        </ul>
+                        <a href="#" class="btn btn-info mt-3">View All</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Details -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5>Account Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Account No:</strong> {{ user.acc_no }}</p>
+                        <p><strong>Account Holder:</strong> {{ user.name }}</p>
+                        <p><strong>Status:</strong> {% if user.is_active == 1 %} Active {% else %} Inactive {% endif %}</p>
+                        <a href="#" class="btn btn-success">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <!-- Account Actions -->
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning text-white">
+                        <h5>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <a href="#" class="btn btn-warning w-100">Transfer Funds</a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="#" class="btn btn-warning w-100">Deposit Money</a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="#" class="btn btn-warning w-100">Withdraw Money</a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="#" class="btn btn-warning w-100">Change Password</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center p-3 mt-5">
+        <p>&copy; 2024 Banking App. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

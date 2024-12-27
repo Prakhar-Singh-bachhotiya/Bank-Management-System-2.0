@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Update Profile</h1>
+    </header>
+
+    <div class="container">
+        <form method="POST" action="{{ url_for('update_profile') }}">
+            <h2>Update your information</h2>
+            <input type="text" name="name" placeholder="Name" value="{{ user.name }}" required>
+            <input type="text" name="city" placeholder="City" value="{{ user.city }}" required>
+            <input type="text" name="contact" placeholder="Contact Number" value="{{ user.contact }}" required>
+            <input type="email" name="email" placeholder="Email ID" value="{{ user.email }}" required>
+            <textarea name="address" placeholder="Address" required>{{ user.address }}</textarea>
+            <button type="submit">Update Profile</button>
+        </form>
+        <div>
+            <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+        </div>
+    </div>
+
+        <!-- Contact Us Section -->
+        <div class="contact-us mt-4">
+            <h4>Contact Us</h4>
+            <p>Email: <a href="mailto:support@bankingapp.com">support@bankingapp.com</a></p>
+            <p>Phone: <a href="tel:+1234567890">+1 234 567 890</a></p>
+            <p>Address: 1234 Banking Lane, Finance City, USA</p>
+        </div>
+    </div>
+</body>
+</html>
+</body>
+</html>
