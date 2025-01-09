@@ -338,6 +338,31 @@ def change_password():
 
     return render_template('change_password.html', user=user)
 
+from flask import render_template, request, session
+from models import User, Transaction  # Import your models
+
+@app.route('/view_transactions', methods=['GET'])
+def view_transactions():
+    # Get the current user
+    current_user = User.query.filter_by(id=session['user_id']).first()
+
+    # Get filter parameters
+    transaction_type = request.args.get('type')
+    date_filter = request.args.get('date')
+
+    # Query transactions
+    query = Transaction.query.filter_by(user_id=current_user.id)
+    if transaction_type:
+        query = query.filter_by(type=transaction_type)
+    if date_filter:
+        query = query.filter(Transaction.timestamp.like(f'{date_filter}%'))
+
+    # Pagination (10 transactions per page)
+    page = request.args.get('page', 1, type=int)
+    transactions = query.order_by(Transaction.timestamp.desc()).paginate(page=page, per_page=10)
+
+    return render_template('transactions.html', transactions=transactions)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
