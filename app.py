@@ -66,8 +66,6 @@ def register():
             flash('Invalid date format. Please use YYYY-MM-DD.')
             return redirect(url_for('register'))
 
-        
-
         # Create new user instance
         new_user = User(
             name=name,
@@ -75,7 +73,7 @@ def register():
             city=city,
             contact=contact,
             email=email,
-            password=password,
+            password=generate_password_hash(password),  # Use hashed password
             address=address,
             acc_no=acc_no,
             balance=balance
@@ -85,15 +83,23 @@ def register():
             # Add user to the database
             db.session.add(new_user)
             db.session.commit()
+
+            # Set session user_id after successful registration
+            session['user_id'] = new_user.id
+            current_user = new_user
+
+            # Get recent transactions
+            transactions = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.timestamp.desc()).limit(5).all()
+
             flash(f'User registered successfully! Your account number is: {acc_no}')
-            return render_template('dashboard.html')  # Redirect to dashboard after successful registration
+            return render_template('dashboard.html', user=current_user, transactions=transactions)
+
         except Exception as e:
             db.session.rollback()
             flash(f'Error: {e}')
             return redirect(url_for('register'))
 
     return render_template('register.html')
-
 
 @app.route('/login', methods=['POST'])
 def login():
