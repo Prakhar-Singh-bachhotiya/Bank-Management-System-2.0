@@ -67,15 +67,23 @@
                         <h5>Recent Transactions</h5>
                     </div>
                     <div class="card-body">
-                        <ul class="list-group">
-                            <li class="list-group-item">₹500 - Grocery Purchase</li>
-                            <li class="list-group-item">₹200 - Online Payment</li>
-                            <li class="list-group-item">₹1,000 - Salary Credit</li>
-                        </ul>
-                        <a href="#" class="btn btn-info mt-3">View All</a>
+                        {% if transactions %}
+                            <ul class="list-group">
+                                {% for transaction in transactions %}
+                                    <li class="list-group-item">
+                                        ₹{{ transaction.amount }} - {{ transaction.description }} 
+                                        <span class="text-muted float-end">{{ transaction.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No recent transactions.</p>
+                        {% endif %}
+                        <a href="{{ url_for('transfer_funds') }}" class="btn btn-info mt-3">View All</a>
                     </div>
                 </div>
             </div>
+            
 
             <!-- Account Details -->
             <div class="col-md-4">

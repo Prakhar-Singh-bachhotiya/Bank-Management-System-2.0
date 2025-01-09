@@ -1,13 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from models import db, User
+from models import db
 import random
 import re
 from datetime import *
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate 
+from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banking_app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+migrate=Migrate(app,db)
+from models import User, Transaction
 
 db.init_app(app)
 
@@ -17,20 +24,10 @@ db.init_app(app)
 def home():
     return render_template('login.html')
 
-from flask import render_template, request, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-import random
-import re
-from werkzeug.security import generate_password_hash
 
-# Assuming the 'User' model is already defined in your app
-# from yourapp.models import User
-from flask import render_template, request, redirect, url_for, flash
-import random
-import re
-from datetime import datetime
-from werkzeug.security import generate_password_hash
+
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -118,11 +115,14 @@ def dashboard():
         return redirect(url_for('login'))
 
     # Fetch user data from the database
-    user = User.query.filter_by(id=session['user_id']).first()
-    if user:
-        return render_template('dashboard.html', user=user)
+    current_user = User.query.filter_by(id=session['user_id']).first()
+    if current_user:
+        transactions = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.timestamp.desc()).limit(5).all()
+
+        return render_template('dashboard.html', user=current_user, transactions=transactions)
     else:
         return redirect(url_for('login'))
+
 
 @app.route('/logout')
 def logout():
@@ -193,39 +193,6 @@ def toggle_active(user_id):
     flash(f"Account has been {status} successfully.", "success")
     return redirect(url_for('update_profile'))
 
-@app.route('/transaction', methods=['POST'])
-def transaction():
-    if 'user_id' not in session:
-        return redirect(url_for('home'))
-
-    user = User.query.get(session['user_id'])
-    action = request.form['action']
-    amount = float(request.form['amount'])
-
-    if action == 'credit':
-        user.balance += amount
-        flash(f'Amount credited: {amount}')
-    elif action == 'debit':
-        if user.balance >= amount:
-            user.balance -= amount
-            flash(f'Amount debited: {amount}')
-        else:
-            flash('Insufficient balance')
-    elif action == 'transfer':
-        recipient_acc = request.form['recipient_acc']
-        recipient = User.query.filter_by(acc_no=recipient_acc).first()
-        if recipient:
-            if user.balance >= amount:
-                user.balance -= amount
-                recipient.balance += amount
-                flash(f'Amount transferred: {amount} to {recipient.name}')
-            else:
-                flash('Insufficient balance')
-        else:
-            flash('Recipient account not found')
-
-    db.session.commit()
-    return redirect(url_for('dashboard'))
 
 @app.route('/deactivate_account')
 def deactivate_account():
@@ -246,7 +213,7 @@ def deposit_money():
         deposit_method = request.form['deposit_method']
 
         # Get current user (assuming logged in user)
-        current_user = User.query.first()  # Change to actual logged-in user
+        current_user = User.query.filter_by(id=session['user_id']).first()  
 
         current_user.balance += amount
         db.session.commit()
@@ -258,17 +225,19 @@ def deposit_money():
 
 @app.route('/transfer_funds', methods=['GET', 'POST'])
 def transfer_funds():
+    # Get all users excluding the current user
+    current_user = User.query.filter_by(id=session['user_id']).first()  # Replace this with the logic to get the logged-in user
+    all_recipients = User.query.filter(User.id != current_user.id).all()
+
     if request.method == 'POST':
-        recipient_account = request.form['account_number']
+        recipient_id = request.form['recipient_id']
         amount = float(request.form['amount'])
         transfer_note = request.form.get('transfer_note', '')
 
-        # Get current user (assuming logged in user)
-        current_user = User.query.first()  # This should be changed to get the logged-in user
-
-        recipient = User.query.filter_by(acc_no=recipient_account).first()
+        recipient = User.query.filter_by(id=recipient_id).first()
         if recipient:
             if current_user.balance >= amount:
+                # Perform the fund transfer
                 current_user.balance -= amount
                 recipient.balance += amount
                 db.session.commit()
@@ -280,7 +249,7 @@ def transfer_funds():
 
         return redirect(url_for('dashboard'))
 
-    return render_template('transfer_funds.html')
+    return render_template('transfer_funds.html', recipients=all_recipients)
 
 @app.route('/withdraw_money', methods=['GET', 'POST'])
 def withdraw_money():
@@ -289,7 +258,7 @@ def withdraw_money():
         withdraw_method = request.form['withdraw_method']
 
         # Get current user (assuming logged in user)
-        current_user = User.query.first()  # Change to actual logged-in user
+        current_user = User.query.filter_by(id=session['user_id']).first()
 
         if current_user.balance >= amount:
             current_user.balance -= amount
