@@ -216,6 +216,14 @@ def deposit_money():
         current_user = User.query.filter_by(id=session['user_id']).first()  
 
         current_user.balance += amount
+        transaction=Transaction(
+                    user_id=current_user.id,
+                    type='credit',
+                    amount=amount,
+                    description=f'Money Deposited via {deposit_method}'
+                
+        )
+        db.session.add(transaction)
         db.session.commit()
 
         flash(f'Deposited ₹{amount} via {deposit_method}!', 'success')
@@ -240,6 +248,25 @@ def transfer_funds():
                 # Perform the fund transfer
                 current_user.balance -= amount
                 recipient.balance += amount
+
+                # Create transaction records
+                sender_transaction = Transaction(
+                    user_id=current_user.id,
+                    type='debit',
+                    amount=amount,
+                    description=f'Transfered to {recipient.name}: {transfer_note}'
+                )
+                recipient_transaction = Transaction(
+                    user_id=recipient.id,
+                    type='credit',
+                    amount=amount,
+                    description=f'Received from {current_user.name}: {transfer_note}'
+                )
+
+                # Add transactions to the database
+                db.session.add(sender_transaction)
+                db.session.add(recipient_transaction)
+
                 db.session.commit()
                 flash('Funds transferred successfully!', 'success')
             else:
@@ -262,6 +289,13 @@ def withdraw_money():
 
         if current_user.balance >= amount:
             current_user.balance -= amount
+            transaction = Transaction(
+                user_id=current_user.id,
+                type='debit',
+                amount=amount,
+                description=f'Withdrawal via {withdraw_method}'
+            )
+            db.session.add(transaction)
             db.session.commit()
 
             flash(f'₹{amount} withdrawn via {withdraw_method}!', 'success')

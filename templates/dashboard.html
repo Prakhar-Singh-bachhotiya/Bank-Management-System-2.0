@@ -72,6 +72,7 @@
                                 {% for transaction in transactions %}
                                     <li class="list-group-item">
                                         ₹{{ transaction.amount }} - {{ transaction.description }} 
+                                        <br>
                                         <span class="text-muted float-end">{{ transaction.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                                     </li>
                                 {% endfor %}
