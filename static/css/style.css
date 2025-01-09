@@ -136,3 +136,15 @@ footer {
 .card:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.btn-outline-light {
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.btn-outline-light i {
+    margin-right: 8px;
+    font-size: 20px;
+}
+

@@ -9,7 +9,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+ <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Banking App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -34,7 +34,6 @@
             </div>
         </div>
     </nav>
-    
     <!-- Profile Section -->
     <div class="container my-5">
         <div class="row justify-content-center">
@@ -80,6 +79,9 @@
                                 <textarea class="form-control" id="address" name="address" rows="4" readonly>{{ user.address }}</textarea>
                             </div>
                             <div class="text-center">
+                                <a href="{{ url_for('profile') }}" class="btn btn-warning btn-lg mx-2">Edit Profile</a>
+                                <a href="{{ url_for('change_password') }}" class="btn btn-info btn-lg mx-2">Change Password</a>
+                            
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
                             </div>
                         </form>

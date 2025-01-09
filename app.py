@@ -363,6 +363,18 @@ def view_transactions():
 
     return render_template('transactions.html', transactions=transactions)
 
+@app.route('/delete_account/<int:user_id>', methods=['POST'])
+def delete_account(user_id):
+    user = User.query.get_or_404(user_id)
+    
+    if user.balance > 0:
+        flash('Your account balance must be ₹0 to delete the account.', 'danger')
+        return redirect(url_for('update_profile'))
+    
+    db.session.delete(user)
+    db.session.commit()
+    flash('Account deleted successfully.', 'success')
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True)
